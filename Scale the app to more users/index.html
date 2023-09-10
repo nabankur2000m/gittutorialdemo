@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Appointment Booking</title>
+</head>
+<body>
+    <h2>Appointment Booking Form</h2>
+    <form id="appointmentForm">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required><br>
+        <label for="phone">Phone Number:</label><br>
+        <input type="tel" id="phone" name="phone" required><br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <h2>Stored Appointments</h2>
+    <div id="storedAppointments"></div>
+
+    <script>
+        document.getElementById('appointmentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var name = document.getElementById('name').value;
+            var email = document.getElementById('email').value;
+            var phone = document.getElementById('phone').value;
+
+            var appointment = {
+                name: name,
+                email: email,
+                phone: phone
+            };
+
+            localStorage.setItem('appointment', JSON.stringify(appointment));
+
+            document.getElementById('storedAppointments').innerText = 'Name: ' + name + ', Email: ' + email + ', Phone: ' + phone;
+        });
+    </script>
+</body>
+</html>
