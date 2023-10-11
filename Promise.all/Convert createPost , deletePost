@@ -1,0 +1,13 @@
+async function createAndDeletePosts() {
+  try {
+    const createdPost = await createPost("New Post");
+    console.log(`Post created: ${createdPost}`);
+
+    const deletedPost = await deletePost(createdPost.id);
+    console.log(`Post deleted: ${deletedPost}`);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+createAndDeletePosts();
