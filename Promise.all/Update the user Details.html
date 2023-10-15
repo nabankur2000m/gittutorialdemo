@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Booking</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+    <h2>Appointment Booking Form</h2>
+    <form id="appointmentForm">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required><br>
+        <label for="phone">Phone Number:</label><br>
+        <input type="tel" id="phone" name="phone" required><br>
+        <input type="hidden" id="editAppointmentId">
+        <input type="submit" value="Submit">
+    </form>
+
+    <h2>Stored Appointments</h2>
+    <div id="storedAppointments"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            axios.get('https://crudcrud.com/api/baa42201adf74348bfea8cadfc530fb3/appointmentData')
+                .then(function (response) {
+                    console.log(response.data); 
+
+                    displayAppointments(response.data);
+                })
+                .catch(function (error) {
+                    console.error('Error making GET request:', error);
+                });
+        });
+
+        document.getElementById('appointmentForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            var name = document.getElementById('name').value;
+            var email = document.getElementById('email').value;
+            var phone = document.getElementById('phone').value;
+            var editAppointmentId = document.getElementById('editAppointmentId').value;
+
+            if (editAppointmentId) {
+                updateAppointment(editAppointmentId, { name, email, phone });
+            } else {
+                createAppointment({ name, email, phone });
+            }
+        });
+
+        function createAppointment(appointment) {
+            axios.post('https://crudcrud.com/api/baa42201adf74348bfea8cadfc530fb3/appointmentData', appointment)
+                .then(function (response) {
+                    console.log(response.data); 
+                    displayAppointments(response.data);
+                    clearForm();
+                })
+                .catch(function (error) {
+                    console.error('Error making POST request:', error);
+                });
+        }
+
+        function updateAppointment(appointmentId, updatedData) {
+            axios.put(`https://crudcrud.com/api/baa42201adf74348bfea8cadfc530fb3/appointmentData/${appointmentId}`, updatedData)
+                .then(function (response) {
+                    console.log(response.data);
+                    displayAppointments(response.data);
+                    clearForm();
+                })
+                .catch(function (error) {
+                    console.error('Error making PUT request:', error);
+                });
+        }
+
+        function displayAppointments(appointments) {
+            var storedAppointmentsDiv = document.getElementById('storedAppointments');
+            storedAppointmentsDiv.innerHTML = '';
+
+            appointments.forEach(function (appointment, index) {
+                var appointmentDiv = document.createElement('div');
+                appointmentDiv.innerText = 'Name: ' + appointment.name + ', Email: ' + appointment.email + ', Phone: ' + appointment.phone;
+
+                var deleteButton = document.createElement('button');
+                deleteButton.innerHTML = '&#128465;';
+                deleteButton.addEventListener('click', function () {
+                    deleteAppointment(appointment._id);
+                });
+
+                var editButton = document.createElement('button');
+                editButton.innerHTML = '&#9998;'; 
+                editButton.addEventListener('click', function () {
+                    populateFormForEditing(appointment);
+                });
+
+                appointmentDiv.appendChild(deleteButton);
+                appointmentDiv.appendChild(editButton);
+                storedAppointmentsDiv.appendChild(appointmentDiv);
+            });
+        }
+
+        function deleteAppointment(appointmentId) {
+            axios.delete(`https://crudcrud.com/api/baa42201adf74348bfea8cadfc530fb3/appointmentData/${appointmentId}`)
+                .then(function (response) {
+                    console.log(response.data); 
+                    displayAppointments(response.data);
+                })
+                .catch(function (error) {
+                    console.error('Error making DELETE request:', error);
+                });
+        }
+
+        function populateFormForEditing(appointment) {
+            document.getElementById('name').value = appointment.name;
+            document.getElementById('email').value = appointment.email;
+            document.getElementById('phone').value = appointment.phone;
+            document.getElementById('editAppointmentId').value = appointment._id;
+        }
+
+        function clearForm() {
+            document.getElementById('name').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('editAppointmentId').value = '';
+        }
+    </script>
+</body>
+</html>
