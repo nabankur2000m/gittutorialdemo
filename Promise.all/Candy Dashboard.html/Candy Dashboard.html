@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candy Shop Stock Management</title>
+    <style>
+    </style>
+</head>
+<body>
+
+    <h1>Candy Shop Stock Management Tool</h1>
+
+    <form id="candyForm">
+        <label for="candyName">Candy Name:</label>
+        <input type="text" id="candyName" required>
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" required>
+
+        <label for="price">Price:</label>
+        <input type="number" id="price" required>
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" required>
+
+        <button type="button" onclick="addItem()">Add Item</button>
+    </form>
+
+    <ul id="candyList"></ul>
+
+    <script>
+        let candies = [];
+        function addItem() {
+            const candyName = document.getElementById('candyName').value;
+            const description = document.getElementById('description').value;
+            const price = document.getElementById('price').value;
+            const quantity = document.getElementById('quantity').value;
+
+            const candy = {
+                name: candyName,
+                description: description,
+                price: price,
+                quantity: quantity
+            };
+
+            candies.push(candy);
+            updateCandyList();
+        }
+
+        function updateCandyList() {
+            const candyList = document.getElementById('candyList');
+            candyList.innerHTML = '';
+
+            candies.forEach((candy, index) => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    ${candy.name} - 
+                    Description: ${candy.description}, 
+                    Price: ${candy.price}, 
+                    Quantity: ${candy.quantity} 
+                    <button onclick="buyItem(${index}, 1)">Buy 1</button>
+                    <button onclick="buyItem(${index}, 2)">Buy 2</button>
+                    <button onclick="buyItem(${index}, 3)">Buy 3</button>
+                `;
+                candyList.appendChild(listItem);
+            });
+        }
+
+        function buyItem(index, quantityToBuy) {
+            if (candies[index].quantity >= quantityToBuy) {
+                candies[index].quantity -= quantityToBuy;
+                updateCandyList();
+            } else {
+                alert('Not available right now.');
+            }
+        }
+    </script>
+
+</body>
+</html>
